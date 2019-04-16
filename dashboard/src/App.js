@@ -22,13 +22,20 @@ const App = (props) => {
   const [controlledPrice, setControlledPrice] = useState(1)
   const [lab, setLab] = useState('labsoft')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(undefined)
 
   useEffect(() => {
     setLoading(true)
-    axios.get('http://localhost:3001', {params: {interval, price, lab}}).then((response) => {
+    setError(undefined)
+    axios.get('http://ec2-18-219-248-0.us-east-2.compute.amazonaws.com:3001', {params: {interval, price, lab}}).then((response) => {
       setData(response.data.values)
       setCalculatedPrice(response.data.price)
       setLoading(false)
+    }).catch((e) => {
+      setLoading(false)
+      setData([])
+      setCalculatedPrice(0)
+      setError('Requisição inválida')
     })
   }, [interval, price, lab])
 
@@ -55,6 +62,7 @@ const App = (props) => {
     <div className="App">
       <Loading loading={loading}/>
       <h1>Calculadora de demanda ótima</h1>
+      {error && <p style={{color: 'red'}}>{error}</p>}
       <div style={{display: 'flex'}}>
         <Button variant="contained" style={{margin: '10px'}} disabled={lab === 'labsoft'}
                 onClick={() => setLab('labsoft')}>
