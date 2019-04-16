@@ -9,6 +9,10 @@ app.use(cors());
 
 app.get('/', (req, res) => {
   console.log(req.query['interval'])
+  if (req.query['interval'] === 'MONTH' && req.query['lab'] === 'labprog') {
+    res.send(400)
+    return
+  }
   fetchData(req.query['interval'] || 'DAY', req.query['price'] || 1, req.query['lab'] || 'labsoft').then((data) => {
     res.json(data)
   })
